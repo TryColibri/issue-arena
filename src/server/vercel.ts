@@ -5,7 +5,8 @@ import { parseConfig } from '@/server/config';
 /**
  * The deployed app: built once per function instance from the environment,
  * with Linear reached over the network and arenas stored in private Vercel
- * Blob. `api/index.ts` re-exports it for Vercel, which calls its `fetch`.
+ * Blob. `vite.server.config.ts` bundles it into the Vercel function, which
+ * calls its `fetch`.
  */
 export default createApp({
   config: parseConfig(process.env),

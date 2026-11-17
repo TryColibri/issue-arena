@@ -11,7 +11,8 @@ export default defineConfig({
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
   build: {
-    outDir: fileURLToPath(new URL('./dist', import.meta.url)),
+    // The Build Output API's static directory; see vite.server.config.ts.
+    outDir: fileURLToPath(new URL('./.vercel/output/static', import.meta.url)),
     emptyOutDir: true,
   },
   server: {

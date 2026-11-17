@@ -12,7 +12,6 @@
     "rootDir": "."
   },
   "include": [
-    "api/**/*.ts",
     "src/server/**/*.ts",
     "src/shared/**/*.ts",
     "vitest-env.d.ts",

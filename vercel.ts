@@ -1,16 +1,12 @@
-import { routes, type VercelConfig } from '@vercel/config/v1';
+import { type VercelConfig } from '@vercel/config/v1';
 
 /**
- * One Vercel project: Vite builds the SPA to `dist/`, which the CDN serves,
- * and `api/index.ts` is the single Node.js function behind every `/api` path.
+ * One Vercel project that deploys a prebuilt Build Output API tree.
+ * `pnpm build` writes `.vercel/output`: the SPA in `static/`, the bundled Hono
+ * function in `functions/api.func/` and `config.json`, which holds the routes
+ * (see `vite.server.config.ts`). Vercel runs no framework build of its own.
  */
 export const config: VercelConfig = {
-  framework: 'vite',
+  framework: null,
   buildCommand: 'pnpm build',
-  outputDirectory: 'dist',
-  rewrites: [
-    routes.rewrite('/api/:path*', '/api'),
-    // Client-side routes: everything that is not the API and not a file.
-    routes.rewrite('/((?!api/).*)', '/index.html'),
-  ],
 };

@@ -30,7 +30,7 @@ persists them across reloads.
 | Script           | What it does                                      |
 | ---------------- | ------------------------------------------------- |
 | `pnpm dev`       | API (`tsx watch`) and Vite together               |
-| `pnpm build`     | `vite build` to `dist/`                           |
+| `pnpm build`     | SPA and function bundle to `.vercel/output`       |
 | `pnpm format`    | check formatting (`pnpm format:fix` to fix)       |
 | `pnpm lint`      | oxlint, type-aware (`pnpm lint:fix` to fix)       |
 | `pnpm typecheck` | `tsc -b`                                          |
@@ -61,8 +61,9 @@ URLs, and every preview has its own. Test OAuth locally or on production.
 
 ## Deploy (Vercel)
 
-One Vercel project: Vite builds the SPA to `dist/`, which the CDN serves, and
-`api/index.ts` is the single Node.js function behind `/api/*` (see `vercel.ts`).
+One Vercel project that deploys a prebuilt Build Output API tree: `pnpm build`
+writes the SPA to `.vercel/output/static` and the Hono app, bundled into one
+file, to `.vercel/output/functions/api.func` (see `vite.server.config.ts`).
 Vercel's Git integration deploys previews for pull requests and production for
 `main`.
 

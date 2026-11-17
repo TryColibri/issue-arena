@@ -17,28 +17,28 @@ reference. Stack, layering, tooling, CI and coding standards come from
 
 # Tech stack
 
-| Concern         | Choice                                                                                                                                                           |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Shape           | **One Vercel project**: a **Vite + React 19 + TypeScript SPA** on the CDN, and **one Hono app** as a single Node.js Vercel Function (Fluid Compute)              |
-| Function entry  | `api/index.ts`, a 2-line shim that re-exports `src/server/vercel.ts`. The one documented exception to "all source under `src/`", because Vercel looks for `api/` |
-| Vercel config   | `vercel.ts` (`@vercel/config`): `framework: 'vite'`, `/api/:path*` → `/api`, SPA fallback `/((?!api/).*)` → `/index.html`                                        |
-| Routes          | Everything the server answers lives under `/api`: `/api/auth/*` (OAuth) and `/api/v1/*` (REST)                                                                   |
-| Auth            | Linear OAuth (PKCE + `state`, `read` scope). Session = sealed cookie (`jose`, `dir` + `A256GCM`): `HttpOnly; SameSite=Lax`, `Secure` over HTTPS                  |
-| Persistence     | Arena state lives in `localStorage` (authoritative while playing), flushed asynchronously to **private Vercel Blob**. A failed flush is fine                     |
-| Linear          | GraphQL over `fetch` in `src/server/linear/`, every response parsed with Zod                                                                                     |
-| API             | REST under `/api/v1`, Zod schemas in `src/shared/api/` as the contract, `@hono/zod-validator`, RFC 9457 errors                                                   |
-| API client      | Hono's typed client (`hc`) in `src/shared/client/`                                                                                                               |
-| SPA routing     | **React Router** as a client-side library (declarative mode). No framework mode, no SSR                                                                          |
-| SPA data        | **`useSWR`** for reads; mutations with the typed client followed by SWR `mutate`                                                                                 |
-| Styling         | Tailwind CSS v4 (`@tailwindcss/vite`) utility classes, `@theme` tokens in `src/ui/styles.css`                                                                    |
-| UI primitives   | **Base UI** (`@base-ui/react`) for popovers, menus, checkboxes, …                                                                                                |
-| Icons and fonts | `@phosphor-icons/react`; `@fontsource/geist` and `@fontsource/geist-mono` (bundled)                                                                              |
-| Package manager | pnpm — always use `pnpm add`/`pnpm remove`, never edit dependencies in `package.json` directly. Exact versions                                                   |
-| Test runner     | Vitest (projects: `server` (node) for server and shared, `ui` (jsdom) for UI)                                                                                    |
-| Formatter       | oxfmt — `pnpm format:fix` to auto-format (or `pnpm fix` to format and lint together)                                                                             |
-| Lint            | oxlint (type-aware via `oxlint-tsgolint`) — `pnpm lint` runs oxlint only; formatting is checked separately via `pnpm format`                                     |
-| Typecheck       | TypeScript 7, `tsc -b` over `tsconfig.server.json`, `tsconfig.ui.json` and `tsconfig.node.json`                                                                  |
-| Node            | `.nvmrc`; `engines.node` is `>=24`                                                                                                                               |
+| Concern         | Choice                                                                                                                                                                                                                      |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Shape           | **One Vercel project**: a **Vite + React 19 + TypeScript SPA** on the CDN, and **one Hono app** as a single Node.js Vercel Function (Fluid Compute)                                                                         |
+| Function entry  | `src/server/vercel.ts`, bundled with its dependencies into one `index.mjs` by `vite.server.config.ts` (Vite's Rolldown SSR build). Vercel runs no source file: `pnpm build` writes the whole deployment to `.vercel/output` |
+| Vercel config   | `vercel.ts` (`@vercel/config`): `framework: null` and `buildCommand`. Routes live in the generated `.vercel/output/config.json`: `/api/(.*)` → function, then files, then SPA fallback → `/index.html`                      |
+| Routes          | Everything the server answers lives under `/api`: `/api/auth/*` (OAuth) and `/api/v1/*` (REST)                                                                                                                              |
+| Auth            | Linear OAuth (PKCE + `state`, `read` scope). Session = sealed cookie (`jose`, `dir` + `A256GCM`): `HttpOnly; SameSite=Lax`, `Secure` over HTTPS                                                                             |
+| Persistence     | Arena state lives in `localStorage` (authoritative while playing), flushed asynchronously to **private Vercel Blob**. A failed flush is fine                                                                                |
+| Linear          | GraphQL over `fetch` in `src/server/linear/`, every response parsed with Zod                                                                                                                                                |
+| API             | REST under `/api/v1`, Zod schemas in `src/shared/api/` as the contract, `@hono/zod-validator`, RFC 9457 errors                                                                                                              |
+| API client      | Hono's typed client (`hc`) in `src/shared/client/`                                                                                                                                                                          |
+| SPA routing     | **React Router** as a client-side library (declarative mode). No framework mode, no SSR                                                                                                                                     |
+| SPA data        | **`useSWR`** for reads; mutations with the typed client followed by SWR `mutate`                                                                                                                                            |
+| Styling         | Tailwind CSS v4 (`@tailwindcss/vite`) utility classes, `@theme` tokens in `src/ui/styles.css`                                                                                                                               |
+| UI primitives   | **Base UI** (`@base-ui/react`) for popovers, menus, checkboxes, …                                                                                                                                                           |
+| Icons and fonts | `@phosphor-icons/react`; `@fontsource/geist` and `@fontsource/geist-mono` (bundled)                                                                                                                                         |
+| Package manager | pnpm — always use `pnpm add`/`pnpm remove`, never edit dependencies in `package.json` directly. Exact versions                                                                                                              |
+| Test runner     | Vitest (projects: `server` (node) for server and shared, `ui` (jsdom) for UI)                                                                                                                                               |
+| Formatter       | oxfmt — `pnpm format:fix` to auto-format (or `pnpm fix` to format and lint together)                                                                                                                                        |
+| Lint            | oxlint (type-aware via `oxlint-tsgolint`) — `pnpm lint` runs oxlint only; formatting is checked separately via `pnpm format`                                                                                                |
+| Typecheck       | TypeScript 7, `tsc -b` over `tsconfig.server.json`, `tsconfig.ui.json` and `tsconfig.node.json`                                                                                                                             |
+| Node            | `.nvmrc`; `engines.node` is `>=24`                                                                                                                                                                                          |
 
 TypeScript 7 ships no editor plugin API. Install the dedicated **TypeScript 7**
 extension (`TypeScriptTeam.native-preview`, recommended in
@@ -160,8 +160,7 @@ possible:
 ## Code layout
 
 ```
-api/index.ts                     # Vercel function shim → src/server/vercel.ts
-vercel.ts, vite.config.ts, vitest.config.ts, tsconfig*.json, .oxlintrc.json, .oxfmtrc.json, oxlint-plugin.ts
+vercel.ts, vite.config.ts (SPA), vite.server.config.ts (function bundle), vitest.config.ts, tsconfig*.json, .oxlintrc.json, .oxfmtrc.json, oxlint-plugin.ts
 src/
   shared/
     api/        # Zod schemas + types by resource: session, linear (pickers), issues, scope, issue-filter, arenas, problems
