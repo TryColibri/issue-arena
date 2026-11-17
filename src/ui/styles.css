@@ -1,0 +1,107 @@
+@import 'tailwindcss';
+
+/* `data-theme` on <html> is always `light` or `dark`: index.html sets it before
+   first paint and `useTheme` keeps it current. */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+/* Brutalist, grayscale, quiet. The design's hard rules live in these tokens:
+
+   - one neutral scale and nothing else: Tailwind's palette is removed, so a
+     stray `bg-red-500` is an unknown class and fails lint
+   - no rounded corners, no blur, no gradients
+   - shadows are offset only, with no blur
+   - dark mode swaps the scale (below), so components never need `dark:` for
+     color: `gray-0` is always the page and `gray-1000` is always the ink. */
+@theme {
+  --font-sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, monospace;
+
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentcolor;
+  --color-gray-0: #ffffff;
+  --color-gray-50: #f6f6f6;
+  --color-gray-100: #ececec;
+  --color-gray-200: #dcdcdc;
+  --color-gray-300: #c4c4c4;
+  --color-gray-400: #a3a3a3;
+  --color-gray-500: #808080;
+  --color-gray-600: #626262;
+  --color-gray-700: #474747;
+  --color-gray-800: #2e2e2e;
+  --color-gray-900: #161616;
+  --color-gray-1000: #000000;
+
+  --radius-*: initial;
+  --blur-*: initial;
+  --drop-shadow-*: initial;
+  --inset-shadow-*: initial;
+  --text-shadow-*: initial;
+  --shadow-*: initial;
+  --shadow-hard: 4px 4px 0 0 var(--color-gray-1000);
+  --shadow-hard-sm: 2px 2px 0 0 var(--color-gray-1000);
+  --shadow-hard-xs: 1px 1px 0 0 var(--color-gray-1000);
+}
+
+/* The dark scale is the light one reversed, so every utility flips with it. */
+html[data-theme='dark'] {
+  --color-gray-0: #000000;
+  --color-gray-50: #0c0c0c;
+  --color-gray-100: #171717;
+  --color-gray-200: #262626;
+  --color-gray-300: #3a3a3a;
+  --color-gray-400: #575757;
+  --color-gray-500: #7a7a7a;
+  --color-gray-600: #9b9b9b;
+  --color-gray-700: #bcbcbc;
+  --color-gray-800: #d6d6d6;
+  --color-gray-900: #ececec;
+  --color-gray-1000: #ffffff;
+}
+
+@layer base {
+  html,
+  body {
+    background: var(--color-gray-0);
+    color: var(--color-gray-1000);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  html[data-theme='dark'] {
+    color-scheme: dark;
+  }
+
+  /* Own stacking context, so z-indexed app content (sticky headers) can never
+     paint above Base UI layers portaled to <body> (dialogs, popovers). */
+  #root {
+    isolation: isolate;
+  }
+
+  /* Links are text, underlined: color is not available to say "link". */
+  a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  a:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  button,
+  select,
+  input {
+    border-radius: 0;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gray-1000);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--color-gray-1000);
+    color: var(--color-gray-0);
+  }
+}

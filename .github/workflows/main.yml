@@ -1,0 +1,15 @@
+name: Main
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: main
+  cancel-in-progress: false
+
+# Vercel's Git integration deploys production from `main`; this only keeps the
+# branch honest.
+jobs:
+  checks:
+    uses: ./.github/workflows/checks.yml
