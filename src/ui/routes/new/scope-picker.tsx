@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
 import { type Scope } from '@/shared/api';
-import { type PickerKind, useOptions } from '@/ui/api';
+import { useOptions } from '@/ui/api';
 import { Button } from '@/ui/components/button';
 import { Select } from '@/ui/components/select';
 import { setupURL } from '@/ui/routes/setup/scope-url';
@@ -37,18 +37,16 @@ function SimpleRow({ title, description, scope }: SimpleRowProps) {
   );
 }
 
-type ChoiceRowProps = {
+type ProjectRowProps = {
   /** The row's title. */
   title: string;
   /** One line about what it picks. */
   description: string;
-  /** Which list to choose from. */
-  kind: Extract<PickerKind, 'projects' | 'initiatives'>;
 };
 
-/** A row that asks for one project or initiative before it starts the scope. */
-function ChoiceRow({ title, description, kind }: ChoiceRowProps) {
-  const { data: options, isLoading } = useOptions(kind);
+/** A row that asks for one project before it starts the scope. */
+function ProjectRow({ title, description }: ProjectRowProps) {
+  const { data: options, isLoading } = useOptions('projects');
   const [choice, setChoice] = useState('');
   const navigate = useNavigate();
   const choices = (options ?? []).map((option) => ({
@@ -61,10 +59,7 @@ function ChoiceRow({ title, description, kind }: ChoiceRowProps) {
     if (selected === undefined) {
       return;
     }
-    const scope: Scope =
-      kind === 'projects'
-        ? { type: 'project', projectId: selected.id }
-        : { type: 'initiative', initiativeId: selected.id };
+    const scope: Scope = { type: 'project', projectId: selected.id };
     void navigate(setupURL(scope, `${title}: ${selected.name}`));
   };
 
@@ -114,20 +109,9 @@ export function ScopePicker() {
         description="Everything that is ready to start."
         scope={{ type: 'todo' }}
       />
-      <ChoiceRow
+      <ProjectRow
         title="Project"
         description="The open issues of one project."
-        kind="projects"
-      />
-      <ChoiceRow
-        title="Initiative"
-        description="The open issues of every project in an initiative."
-        kind="initiatives"
-      />
-      <SimpleRow
-        title="All issues"
-        description="Every open issue you can see."
-        scope={{ type: 'all' }}
       />
       <li>
         <Link
