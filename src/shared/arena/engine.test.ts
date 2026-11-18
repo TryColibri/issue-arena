@@ -25,6 +25,7 @@ const issue = (id: string, priority = 0, sortOrder = 0): Issue => ({
   sortOrder,
   state: { name: 'Backlog', type: 'backlog' },
   teamKey: 'T',
+  blocked: false,
   assignee: null,
   projectName: null,
   labels: [],

@@ -24,7 +24,7 @@ const value = tw`font-mono text-xs text-gray-1000 tabular-nums`;
 
 /**
  * An issue as a card: identifier, title, state, priority, then a plain
- * two-column grid of metadata, the description excerpt and a link to Linear.
+ * two-column grid of metadata, the labels and a link to Linear.
  * `children` render in a footer, for actions. `className` is merged over the
  * card styles; `ref` is the `<section>`.
  */
@@ -109,9 +109,6 @@ export function IssueCard({
               </li>
             ))}
           </ul>
-        )}
-        {issue.excerpt === '' ? null : (
-          <p className="text-sm/relaxed text-gray-700">{issue.excerpt}</p>
         )}
         <a
           href={issue.url}

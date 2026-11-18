@@ -99,6 +99,14 @@ const issueNodeSchema = z.object({
     .nullable(),
   project: z.object({ name: z.string() }).nullable(),
   labels: z.object({ nodes: z.array(z.object({ name: z.string() })) }),
+  inverseRelations: z.object({
+    nodes: z.array(
+      z.object({
+        type: z.string(),
+        issue: z.object({ state: z.object({ type: stateTypeSchema }) }),
+      }),
+    ),
+  }),
   estimate: z.number().nullable(),
   dueDate: z.string().nullable(),
   description: z.string().nullable(),
@@ -114,6 +122,7 @@ const issuesQuery = `
         assignee { name avatarUrl }
         project { name }
         labels(first: 20) { nodes { name } }
+        inverseRelations(first: 25) { nodes { type issue { state { type } } } }
         estimate dueDate description
       }
       pageInfo { hasNextPage endCursor }
@@ -230,6 +239,15 @@ const pickers: Record<OptionKind, Picker> = {
   }),
 };
 
+/** Whether a relation says that an issue still open blocks this one. */
+const isOpenBlocker = ({
+  type,
+  issue,
+}: z.infer<typeof issueNodeSchema>['inverseRelations']['nodes'][number]) =>
+  type === 'blocks' &&
+  issue.state.type !== 'completed' &&
+  issue.state.type !== 'canceled';
+
 const toIssue = (node: z.infer<typeof issueNodeSchema>): Issue => ({
   id: node.id,
   identifier: node.identifier,
@@ -243,6 +261,7 @@ const toIssue = (node: z.infer<typeof issueNodeSchema>): Issue => ({
   assignee: node.assignee,
   projectName: node.project?.name ?? null,
   labels: node.labels.nodes.map((label) => label.name),
+  blocked: node.inverseRelations.nodes.some(isOpenBlocker),
   estimate: node.estimate,
   dueDate: node.dueDate,
   excerpt: toExcerpt(node.description),

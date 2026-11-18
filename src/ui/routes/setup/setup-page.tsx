@@ -15,6 +15,7 @@ import {
   NO_FILTERS,
   type SetupFilters,
 } from './filter-issues';
+import { FilterToggle } from './filter-toggle';
 import { parseSetupParams } from './scope-url';
 
 const DEFAULT_N = 3;
@@ -46,7 +47,11 @@ function Setup({ scope, label }: SetupProps) {
   const n = clampN(nText, candidates.length, DEFAULT_N);
   const battles = estimateBattles({ count: candidates.length, n });
 
-  const setFilter = (key: keyof SetupFilters) => {
+  const setHideBlocked = (hideBlocked: boolean) => {
+    setFilters((current) => ({ ...current, hideBlocked }));
+  };
+
+  const setFilter = (key: 'states' | 'priorities' | 'labels') => {
     return (values: string[]) => {
       setFilters((current) => ({ ...current, [key]: values }));
     };
@@ -126,12 +131,6 @@ function Setup({ scope, label }: SetupProps) {
         </h2>
         <div className="flex flex-wrap gap-3">
           <FilterChip
-            name="Team"
-            options={facets.teams}
-            values={filters.teams}
-            onValuesChange={setFilter('teams')}
-          />
-          <FilterChip
             name="State"
             options={facets.states}
             values={filters.states}
@@ -149,6 +148,12 @@ function Setup({ scope, label }: SetupProps) {
             values={filters.labels}
             onValuesChange={setFilter('labels')}
           />
+          <FilterToggle
+            checked={filters.hideBlocked}
+            onCheckedChange={setHideBlocked}
+          >
+            Hide blocked
+          </FilterToggle>
         </div>
       </section>
 

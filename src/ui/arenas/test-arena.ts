@@ -14,6 +14,7 @@ export const testIssue = (
   sortOrder: Number(id.length === 1 ? id.charCodeAt(0) : 0),
   state: { name: 'Todo', type: 'unstarted' },
   teamKey: 'T',
+  blocked: false,
   assignee: null,
   projectName: null,
   labels: [],

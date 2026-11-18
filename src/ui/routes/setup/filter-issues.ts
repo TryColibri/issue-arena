@@ -3,22 +3,22 @@ import { type MultiSelectOption } from '@/ui/components/multi-select';
 
 /** The setup screen's filter chips. An empty list means "any". */
 export type SetupFilters = {
-  /** Team keys. */
-  teams: string[];
   /** State names. */
   states: string[];
   /** Priorities, as the strings `0` to `4`. */
   priorities: string[];
   /** Label names: an issue matches when it has at least one. */
   labels: string[];
+  /** Whether to drop issues that an open issue blocks. */
+  hideBlocked: boolean;
 };
 
 /** No filter at all. */
 export const NO_FILTERS: SetupFilters = {
-  teams: [],
   states: [],
   priorities: [],
   labels: [],
+  hideBlocked: false,
 };
 
 const matches = (selected: string[], value: string): boolean =>
@@ -26,7 +26,7 @@ const matches = (selected: string[], value: string): boolean =>
 
 /**
  * The issues that pass every filter chip. Within a chip any value matches;
- * across chips all must.
+ * across chips all must. Blocked issues are dropped when `hideBlocked` is on.
  *
  * @param issues - Issues in scope.
  * @param filters - The chips.
@@ -34,7 +34,7 @@ const matches = (selected: string[], value: string): boolean =>
 export function filterIssues(issues: Issue[], filters: SetupFilters): Issue[] {
   return issues.filter(
     (issue) =>
-      matches(filters.teams, issue.teamKey) &&
+      !(filters.hideBlocked && issue.blocked) &&
       matches(filters.states, issue.state.name) &&
       matches(filters.priorities, String(issue.priority)) &&
       (filters.labels.length === 0 ||
@@ -44,8 +44,6 @@ export function filterIssues(issues: Issue[], filters: SetupFilters): Issue[] {
 
 /** The choices each chip offers, drawn from the issues in scope. */
 export type Facets = {
-  /** Teams present, by key. */
-  teams: MultiSelectOption[];
   /** States present, by name. */
   states: MultiSelectOption[];
   /** Priorities present, most urgent first, none last. */
@@ -89,7 +87,6 @@ export function facetsOf(issues: Issue[]): Facets {
   }
 
   return {
-    teams: options(count((issue) => [issue.teamKey])),
     states: options(count((issue) => [issue.state.name])),
     priorities: [...priorities]
       .toSorted(([x], [y]) => rank(Number(x)) - rank(Number(y)))
