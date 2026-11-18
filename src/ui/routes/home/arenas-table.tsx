@@ -79,7 +79,7 @@ export function ArenasTable() {
   if (arenas.length === 0) {
     return (
       <p className="text-sm text-gray-600">
-        No arenas yet. Pick a scope above to start one.
+        No arenas yet. Start a new one to rank your issues.
       </p>
     );
   }

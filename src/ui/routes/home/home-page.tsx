@@ -1,20 +1,21 @@
-import { ArenasTable } from './arenas-table';
-import { ScopePicker } from './scope-picker';
+import { PlusIcon } from '@phosphor-icons/react';
 
-/** Signed in: choose what to rank, or pick up an earlier arena. */
+import { ButtonLink } from '@/ui/components/button';
+
+import { ArenasTable } from './arenas-table';
+
+/** Signed in: pick up an earlier arena, or start a new one. */
 export function HomePage() {
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-16 px-6 py-16">
-      <section className="flex flex-col gap-6">
-        <h1 className="text-3xl font-semibold">What do you want to rank?</h1>
-        <ScopePicker />
-      </section>
-      <section className="flex flex-col gap-6">
-        <h2 className="font-mono text-xs tracking-wider text-gray-600 uppercase">
-          Your arenas
-        </h2>
-        <ArenasTable />
-      </section>
+    <div className="mx-auto flex max-w-3xl flex-col gap-10 px-6 py-16">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <h1 className="text-3xl font-semibold">Your arenas</h1>
+        <ButtonLink to="/new" variant="primary">
+          <PlusIcon className="size-4" aria-hidden="true" />
+          New arena
+        </ButtonLink>
+      </div>
+      <ArenasTable />
     </div>
   );
 }

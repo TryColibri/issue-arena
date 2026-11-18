@@ -9,6 +9,7 @@ import { SWRConfig } from 'swr';
 import { ArenaPage } from './routes/arena/arena-page';
 import { CustomScopePage } from './routes/custom-scope/custom-scope-page';
 import { HomePage } from './routes/home/home-page';
+import { NewArenaPage } from './routes/new/new-arena-page';
 import { NotFoundPage } from './routes/not-found/not-found-page';
 import { ResultsPage } from './routes/results/results-page';
 import { RootLayout } from './routes/root-layout';
@@ -20,6 +21,7 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route element={<RootLayout />}>
       <Route index element={<HomePage />} />
+      <Route path="new" element={<NewArenaPage />} />
       <Route path="custom" element={<CustomScopePage />} />
       <Route path="setup" element={<SetupPage />} />
       <Route path="arenas/:id" element={<ArenaPage />} />

@@ -17,7 +17,7 @@ import {
 } from './filter-issues';
 import { parseSetupParams } from './scope-url';
 
-const DEFAULT_N = 10;
+const DEFAULT_N = 3;
 
 type SetupProps = {
   /** What to rank. */
@@ -181,7 +181,7 @@ function Setup({ scope, label }: SetupProps) {
         >
           Start arena
         </Button>
-        <ButtonLink to="/">Cancel</ButtonLink>
+        <ButtonLink to="/new">Cancel</ButtonLink>
       </div>
     </div>
   );
@@ -200,7 +200,7 @@ export function SetupPage() {
       {parsed === null ? (
         <p className="text-gray-700">
           That link is missing its scope.{' '}
-          <Link to="/">Choose what to rank</Link>.
+          <Link to="/new">Choose what to rank</Link>.
         </p>
       ) : (
         <Setup scope={parsed.scope} label={parsed.label} />

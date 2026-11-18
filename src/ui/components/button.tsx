@@ -10,13 +10,14 @@ export type ButtonVariant = 'primary' | 'secondary' | 'danger';
 /** Size of a button: `large` is the 44px call to action, `small` fits toolbars. */
 export type ButtonSize = 'large' | 'small';
 
-// Square, 1px border, hard shadow. Hover darkens the border, pressing collapses
+// Square, 1px border, hard shadow. The primary fill is the ink color, so its
+// shadow is mid-gray: an ink shadow would merge with it. Hover darkens the border, pressing collapses
 // the shadow by moving the button onto it, and motion is 100ms with none under
 // `prefers-reduced-motion`. Disabled is a flat gray fill with low contrast.
 const base = tw`inline-flex cursor-pointer items-center justify-center gap-2 border font-sans whitespace-nowrap no-underline hover:no-underline disabled:translate-0 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-100 disabled:text-gray-400 disabled:shadow-none motion-safe:transition-[background-color,border-color,color,box-shadow,translate] motion-safe:duration-100`;
 
 const variants: Record<ButtonVariant, string> = {
-  primary: tw`border-gray-1000 bg-gray-1000 font-semibold text-gray-0 hover:border-gray-1000 hover:bg-gray-800 hover:text-gray-0`,
+  primary: tw`border-gray-1000 bg-gray-700 font-semibold text-gray-0 shadow-gray-500 hover:border-gray-1000 hover:bg-gray-600 hover:text-gray-0`,
   secondary: tw`border-gray-300 bg-gray-0 font-medium text-gray-1000 hover:border-gray-1000 hover:text-gray-1000`,
   danger: tw`border-gray-1000 bg-gray-0 font-medium text-gray-1000 hover:bg-gray-1000 hover:text-gray-0`,
 };

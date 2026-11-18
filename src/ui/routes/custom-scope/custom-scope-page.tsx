@@ -157,7 +157,7 @@ export function CustomScopePage() {
           <Button variant="primary" onClick={continueToSetup}>
             Continue
           </Button>
-          <ButtonLink to="/">Cancel</ButtonLink>
+          <ButtonLink to="/new">Cancel</ButtonLink>
         </div>
       </div>
     </div>
