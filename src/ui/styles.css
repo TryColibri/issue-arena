@@ -38,9 +38,9 @@
   --inset-shadow-*: initial;
   --text-shadow-*: initial;
   --shadow-*: initial;
-  --shadow-hard: 4px 4px 0 0 var(--color-gray-1000);
-  --shadow-hard-sm: 2px 2px 0 0 var(--color-gray-1000);
-  --shadow-hard-xs: 1px 1px 0 0 var(--color-gray-1000);
+  --shadow-hard: 4px 4px 0 0 var(--color-gray-800);
+  --shadow-hard-sm: 2px 2px 0 0 var(--color-gray-800);
+  --shadow-hard-xs: 1px 1px 0 0 var(--color-gray-800);
 }
 
 /* The dark scale is the light one reversed, so every utility flips with it. */
