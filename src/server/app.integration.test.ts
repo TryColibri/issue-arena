@@ -52,6 +52,7 @@ const linearIssue = (n: number) => ({
   assignee: { name: 'Ada', avatarUrl: null },
   project: null,
   labels: { nodes: [{ name: 'bug' }] },
+  inverseRelations: { nodes: [] },
   estimate: null,
   dueDate: null,
   description: `# Heading\n\nSome **bold** text for ${n}`,
@@ -67,6 +68,7 @@ const issue = (id: string): Issue => ({
   sortOrder: 0,
   state: { name: 'Todo', type: 'unstarted' },
   teamKey: 'T',
+  blocked: false,
   assignee: null,
   projectName: null,
   labels: [],
@@ -643,7 +645,40 @@ describe('app', () => {
         projectName: null,
         labels: ['bug'],
         excerpt: 'Heading Some bold text for 1',
+        blocked: false,
       });
+    });
+
+    it('marks an issue blocked only by a blocker that is still open', async () => {
+      const relation = (type: string, stateType: string) => ({
+        type,
+        issue: { state: { type: stateType } },
+      });
+      const blocked = (relations: ReturnType<typeof relation>[]) => ({
+        ...linearIssue(1),
+        inverseRelations: { nodes: relations },
+      });
+      linear.issuePages = [
+        {
+          nodes: [
+            blocked([relation('blocks', 'started')]),
+            { ...blocked([relation('blocks', 'completed')]), id: 'issue-2' },
+            { ...blocked([relation('blocks', 'canceled')]), id: 'issue-3' },
+            { ...blocked([relation('related', 'started')]), id: 'issue-4' },
+          ],
+          hasNextPage: false,
+        },
+      ];
+      const cookies = await signIn();
+      const body = issueSearchResponseSchema.parse(
+        await (await search(cookies, { type: 'my' })).json(),
+      );
+      expect(body.items.map((item) => item.blocked)).toEqual([
+        true,
+        false,
+        false,
+        false,
+      ]);
     });
 
     it('sends the compiled scope filter to Linear', async () => {

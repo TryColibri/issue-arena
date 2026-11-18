@@ -56,6 +56,8 @@ export type Issue = {
   projectName: string | null;
   /** Label names. */
   labels: string[];
+  /** Whether an issue that is still open blocks this one. */
+  blocked: boolean;
   /** Estimate, or `null`. */
   estimate: number | null;
   /** Due date as `YYYY-MM-DD`, or `null`. */
@@ -111,6 +113,10 @@ export const issueSchema: z.ZodType<Issue> = z.strictObject({
     .nullable()
     .describe("Name of the issue's project, or `null`."),
   labels: z.array(z.string()).describe('Label names.'),
+  blocked: z
+    .boolean()
+    .default(false)
+    .describe('Whether an issue that is still open blocks this one.'),
   estimate: z.number().nullable().describe('Estimate, or `null`.'),
   dueDate: z
     .string()

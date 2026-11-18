@@ -14,6 +14,7 @@ const issue = (id: string, overrides: Partial<Issue> = {}): Issue => ({
   sortOrder: 0,
   state: { name: 'Todo', type: 'unstarted' },
   teamKey: 'ENG',
+  blocked: false,
   assignee: null,
   projectName: null,
   labels: [],
@@ -24,10 +25,9 @@ const issue = (id: string, overrides: Partial<Issue> = {}): Issue => ({
 });
 
 const issues = [
-  issue('1', { teamKey: 'ENG', labels: ['bug'] }),
-  issue('2', { teamKey: 'OPS', priority: 1, priorityLabel: 'Urgent' }),
+  issue('1', { labels: ['bug'] }),
+  issue('2', { priority: 1, priorityLabel: 'Urgent', blocked: true }),
   issue('3', {
-    teamKey: 'ENG',
     priority: 0,
     priorityLabel: 'No priority',
     state: { name: 'Backlog', type: 'backlog' },
@@ -44,13 +44,24 @@ describe('filterIssues', () => {
 
   it('matches any value within a chip', () => {
     expect(
-      ids(filterIssues(issues, { ...NO_FILTERS, teams: ['OPS', 'ENG'] })),
+      ids(filterIssues(issues, { ...NO_FILTERS, states: ['Todo', 'Backlog'] })),
     ).toEqual(['1', '2', '3']);
   });
 
   it('requires every chip to match', () => {
-    const filters = { ...NO_FILTERS, teams: ['ENG'], states: ['Backlog'] };
+    const filters = {
+      ...NO_FILTERS,
+      priorities: ['0', '2'],
+      states: ['Backlog'],
+    };
     expect(ids(filterIssues(issues, filters))).toEqual(['3']);
+  });
+
+  it('keeps blocked issues unless asked to hide them', () => {
+    expect(ids(filterIssues(issues, NO_FILTERS))).toEqual(['1', '2', '3']);
+    expect(
+      ids(filterIssues(issues, { ...NO_FILTERS, hideBlocked: true })),
+    ).toEqual(['1', '3']);
   });
 
   it('filters by priority', () => {
@@ -72,9 +83,9 @@ describe('filterIssues', () => {
 describe('facetsOf', () => {
   it('counts issues per choice', () => {
     const facets = facetsOf(issues);
-    expect(facets.teams).toEqual([
-      { value: 'ENG', label: 'ENG', hint: '2' },
-      { value: 'OPS', label: 'OPS', hint: '1' },
+    expect(facets.states).toEqual([
+      { value: 'Backlog', label: 'Backlog', hint: '1' },
+      { value: 'Todo', label: 'Todo', hint: '2' },
     ]);
     expect(facets.labels).toEqual([
       { value: 'bug', label: 'bug', hint: '2' },
