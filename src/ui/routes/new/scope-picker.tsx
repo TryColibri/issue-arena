@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router';
 import { type Scope } from '@/shared/api';
 import { useOptions } from '@/ui/api';
 import { Button } from '@/ui/components/button';
-import { Select } from '@/ui/components/select';
+import { SearchableSelect } from '@/ui/components/searchable-select';
 import { setupURL } from '@/ui/routes/setup/scope-url';
 import { tw } from '@/ui/tw';
 
@@ -68,7 +68,7 @@ function ProjectRow({ title, description }: ProjectRowProps) {
       <div className="flex flex-1 flex-col gap-1">
         <span className="font-semibold">{title}</span>
         <span className="text-sm text-gray-600">{description}</span>
-        <Select
+        <SearchableSelect
           aria-label={title}
           value={choice}
           disabled={isLoading || options?.length === 0}
