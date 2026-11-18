@@ -119,9 +119,11 @@ describe('CustomScopePage', () => {
     await userEvent.keyboard('{Escape}');
 
     await addFilter('Team');
-    await userEvent.selectOptions(
-      screen.getByLabelText('Team operator'),
-      'isNot',
+    await userEvent.click(
+      screen.getByRole('combobox', { name: 'Team operator' }),
+    );
+    await userEvent.click(
+      await screen.findByRole('option', { name: /is not/i }),
     );
     await userEvent.click(screen.getByRole('button', { name: 'team values' }));
     await userEvent.click(
@@ -129,7 +131,8 @@ describe('CustomScopePage', () => {
     );
     await userEvent.keyboard('{Escape}');
 
-    await userEvent.selectOptions(screen.getByLabelText(/^Match/), 'any');
+    await userEvent.click(screen.getByRole('combobox', { name: 'Match' }));
+    await userEvent.click(await screen.findByRole('option', { name: 'any' }));
 
     expect((await astAfterContinue())?.scope).toEqual({
       type: 'custom',

@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router';
 import { type IssueFilter, MAX_FILTER_CONDITIONS } from '@/shared/api';
 import { useIssueSearch } from '@/ui/api';
 import { Button, buttonClasses, ButtonLink } from '@/ui/components/button';
+import { Select, type SelectOption } from '@/ui/components/select';
 import { setupURL } from '@/ui/routes/setup/scope-url';
 
 import { ConditionRow } from './condition-row';
@@ -17,6 +18,11 @@ import {
   toFilter,
 } from './filter-model';
 import { useDebounced } from './use-debounced';
+
+const MATCH_OPTIONS: SelectOption[] = [
+  { value: 'all', label: 'all' },
+  { value: 'any', label: 'any' },
+];
 
 const COUNT_DEBOUNCE_MS = 400;
 
@@ -74,20 +80,18 @@ export function CustomScopePage() {
 
       <div className="flex flex-col gap-4">
         {rows.length > 1 ? (
-          <label className="flex items-center gap-2 text-sm">
+          <div className="flex items-center gap-2 text-sm">
             Match
-            <select
+            <Select
+              aria-label="Match"
               value={match}
-              onChange={(event) => {
-                setMatch(event.target.value === 'any' ? 'any' : 'all');
+              options={MATCH_OPTIONS}
+              onValueChange={(value) => {
+                setMatch(value === 'any' ? 'any' : 'all');
               }}
-              className="min-h-9 border border-gray-300 bg-gray-0 px-2 hover:border-gray-1000"
-            >
-              <option value="all">all</option>
-              <option value="any">any</option>
-            </select>
+            />
             of these filters
-          </label>
+          </div>
         ) : null}
 
         {rows.length === 0 ? (

@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router';
 import { type Scope } from '@/shared/api';
 import { type PickerKind, useOptions } from '@/ui/api';
 import { Button } from '@/ui/components/button';
+import { Select } from '@/ui/components/select';
 import { setupURL } from '@/ui/routes/setup/scope-url';
 import { tw } from '@/ui/tw';
 
@@ -50,6 +51,10 @@ function ChoiceRow({ title, description, kind }: ChoiceRowProps) {
   const { data: options, isLoading } = useOptions(kind);
   const [choice, setChoice] = useState('');
   const navigate = useNavigate();
+  const choices = (options ?? []).map((option) => ({
+    value: option.id,
+    label: option.name,
+  }));
   const selected = options?.find((option) => option.id === choice);
 
   const start = () => {
@@ -65,25 +70,19 @@ function ChoiceRow({ title, description, kind }: ChoiceRowProps) {
 
   return (
     <li className={row}>
-      <label className="flex flex-1 flex-col gap-1">
+      <div className="flex flex-1 flex-col gap-1">
         <span className="font-semibold">{title}</span>
         <span className="text-sm text-gray-600">{description}</span>
-        <select
+        <Select
+          aria-label={title}
           value={choice}
           disabled={isLoading || options?.length === 0}
-          onChange={(event) => {
-            setChoice(event.target.value);
-          }}
-          className="mt-1 min-h-9 max-w-sm border border-gray-300 bg-gray-0 px-2 text-sm hover:border-gray-1000 disabled:border-gray-200 disabled:bg-gray-100 disabled:text-gray-400"
-        >
-          <option value="">{isLoading ? 'Loading…' : 'Choose…'}</option>
-          {options?.map((option) => (
-            <option key={option.id} value={option.id}>
-              {option.name}
-            </option>
-          ))}
-        </select>
-      </label>
+          placeholder={isLoading ? 'Loading…' : 'Choose…'}
+          options={choices}
+          onValueChange={setChoice}
+          className="mt-1 max-w-sm"
+        />
+      </div>
       <Button
         size="small"
         variant="primary"

@@ -2,6 +2,7 @@ import { XIcon } from '@phosphor-icons/react';
 
 import { type Condition } from '@/shared/api';
 import { Button } from '@/ui/components/button';
+import { Select } from '@/ui/components/select';
 
 import { fieldLabel, operatorsOf, withOperator } from './filter-model';
 import { ValueEditor } from './value-editor';
@@ -34,20 +35,14 @@ export function ConditionRow({
       <span className="w-24 shrink-0 text-sm font-semibold">
         {fieldLabel(condition.field)}
       </span>
-      <select
+      <Select
         aria-label={`${fieldLabel(condition.field)} operator`}
         value={condition.operator}
-        onChange={(event) => {
-          onChange(withOperator(condition, event.target.value));
+        options={operatorsOf(condition.field)}
+        onValueChange={(operator) => {
+          onChange(withOperator(condition, operator));
         }}
-        className="min-h-9 border border-gray-300 bg-gray-0 px-2 text-sm hover:border-gray-1000"
-      >
-        {operatorsOf(condition.field).map((operator) => (
-          <option key={operator.value} value={operator.value}>
-            {operator.label}
-          </option>
-        ))}
-      </select>
+      />
       <ValueEditor condition={condition} onChange={onChange} />
       {complete ? null : (
         <span className="font-mono text-xs text-gray-500">Not applied yet</span>
